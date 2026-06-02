@@ -14,9 +14,9 @@ export default async function CommunityPage() {
   const homeHref = profile.role === "admin" ? "/admin" : "/dashboard";
 
   return (
-    <div className="min-h-full bg-muted/20">
+    <div className="min-h-screen bg-background/50">
       <Header name={profile.name} role={profile.role} />
-      <main className="mx-auto max-w-6xl space-y-6 px-4 py-8">
+      <main className="mx-auto max-w-6xl space-y-8 px-4 py-10">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Community</h1>
