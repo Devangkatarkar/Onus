@@ -1,7 +1,6 @@
 import * as XLSX from "xlsx";
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { formatDateTime } from "@/lib/utils/date";
 
 export async function GET(request: Request) {
   const supabase = await createClient();
@@ -30,34 +29,34 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Invalid date" }, { status: 400 });
   }
 
-  const { data, error } = await supabase
-    .from("attendance")
-    .select("attendance_date, marked_at, profiles(name)")
-    .eq("attendance_date", date)
-    .order("marked_at", { ascending: false });
+  // Fetch all employees
+  const { data: employees, error: empError } = await supabase
+    .from("profiles")
+    .select("id, name")
+    .eq("role", "employee")
+    .order("name", { ascending: true });
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  if (empError) {
+    return NextResponse.json({ error: empError.message }, { status: 500 });
   }
 
-  type ExportRow = {
-    attendance_date: string;
-    marked_at: string;
-    profiles: { name: string } | { name: string }[] | null;
-  };
+  // Fetch attendance records for the date
+  const { data: attendance, error: attError } = await supabase
+    .from("attendance")
+    .select("user_id")
+    .eq("attendance_date", date);
 
-  const rows = ((data ?? []) as ExportRow[]).map((record) => {
-    const profile = record.profiles;
-    const name = Array.isArray(profile)
-      ? profile[0]?.name
-      : profile?.name;
+  if (attError) {
+    return NextResponse.json({ error: attError.message }, { status: 500 });
+  }
 
-    return {
-      Name: name ?? "Unknown",
-      Date: record.attendance_date,
-      "Marked At": formatDateTime(record.marked_at),
-    };
-  });
+  const presentIds = new Set((attendance ?? []).map((r) => r.user_id));
+
+  const rows = (employees ?? []).map((emp) => ({
+    Name: emp.name ?? "Unknown",
+    Date: date,
+    Status: presentIds.has(emp.id) ? "Present" : "Absent",
+  }));
 
   const worksheet = XLSX.utils.json_to_sheet(rows);
   const workbook = XLSX.utils.book_new();
