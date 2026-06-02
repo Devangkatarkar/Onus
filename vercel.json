@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/retention?job=daily",
+      "schedule": "30 18 * * *"
+    },
+    {
+      "path": "/api/cron/retention?job=weekly",
+      "schedule": "30 17 * * 0"
+    }
+  ]
+}
