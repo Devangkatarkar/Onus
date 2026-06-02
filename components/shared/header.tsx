@@ -2,6 +2,7 @@ import Link from "next/link";
 import { logoutAction } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/button";
 import type { UserRole } from "@/types";
+import { MobileNav } from "./mobile-nav";
 
 interface HeaderProps {
   name: string;
@@ -20,7 +21,9 @@ export function Header({ name, role }: HeaderProps) {
             {name} <span className="mx-1 opacity-50">•</span> {role}
           </p>
         </div>
-        <nav className="flex flex-wrap items-center gap-1 sm:gap-2">
+        
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex flex-wrap items-center gap-1 sm:gap-2">
           <Link
             href="/community"
             className="inline-flex h-9 items-center justify-center rounded-md px-4 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
@@ -68,6 +71,9 @@ export function Header({ name, role }: HeaderProps) {
             </Button>
           </form>
         </nav>
+
+        {/* Mobile Navigation */}
+        <MobileNav role={role} />
       </div>
     </header>
   );

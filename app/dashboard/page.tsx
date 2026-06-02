@@ -32,7 +32,7 @@ export default async function DashboardPage() {
   return (
     <div className="min-h-screen bg-background/50">
       <Header name={profile.name} role={profile.role} />
-      <main className="mx-auto max-w-6xl space-y-8 px-4 py-10">
+      <main className="mx-auto max-w-6xl space-y-6 md:space-y-8 px-4 py-6 md:py-10">
         <Card>
           <CardHeader>
             <CardTitle>Welcome, {profile.name}</CardTitle>
